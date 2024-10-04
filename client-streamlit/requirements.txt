@@ -1,0 +1,6 @@
+streamlit
+watchdog
+pandas
+numpy
+requests
+audio-recorder-streamlit

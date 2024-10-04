@@ -1,0 +1,4 @@
+*/.myenv/
+/client/.sample-audios/*
+*/.DS_Store
+/stt/credentials.json
