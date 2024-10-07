@@ -1,21 +1,17 @@
-import streamlit as st
 import pandas as pd
+
 import numpy as np
+
+# StreamLit Components
+import streamlit as st
+# Audio Recorder
 from audio_recorder_streamlit import audio_recorder
+# AwsomeTable
+
+
 import requests
 import json
 
-### STYLES ###
-st.markdown(
-    """
-    <style>
-    .background {
-        background-color: #f0f5f5;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 ### APP ###
 st.title("Voice Recognition")
 st.write("Press the button and speak to the microphone")
@@ -25,6 +21,18 @@ def send_audio_to_server(audio_bytes):
     response = requests.post(url, files={"audio": audio_bytes})
     data = response.json()
     return data.get("response")
+
+
+def get_audios():
+    url = "http://stt:5001/audios"
+    response = requests.get(url)
+    # Return type: { "response": [ [ 1, "test", "test" ] ] }
+    # We need to convert it to a DataFrame
+    data = response.json()
+    data = data.get("response")
+    data = pd.DataFrame(data, columns=["id", "name", "description"])
+    return data
+
 
 if 'responses' not in st.session_state:
     st.session_state['responses'] = []
@@ -42,7 +50,8 @@ if audio_bytes:
     st.session_state['responses'].append(response)
 
 
-st.write("Previous responses:")
+st.write("Saved responses:")
 #grid for responses
-st.dataframe(pd.DataFrame(st.session_state['responses'], columns=["Responses"]), hide_index=True, width=1000)
 
+data = get_audios()
+st.dataframe(data, hide_index=True, key = "id", width=None, use_container_width=False)
